@@ -11,7 +11,8 @@ venv/
 .env
 vosk-model-small-en-us-0.15/
 token.pickle
-
+sample.py
+whatsapp.py
 
 # Ignore logs
 *.log
