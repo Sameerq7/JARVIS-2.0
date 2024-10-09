@@ -92,7 +92,8 @@ EMAIL=your_email_id
 
 
 To install the required packages, run:
-pip install -r requirements.txt
+
+"pip install -r requirements.txt"
 
 
 ## Usage Instructions
