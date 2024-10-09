@@ -27,3 +27,5 @@ pyperclip
 requests
 psutil
 python-dotenv
+pillow
+screeninfo
