@@ -98,64 +98,82 @@ pip install -r requirements.txt
 ## Usage Instructions
 To run Jarvis, execute the following command in your terminal:
 
-```bash
 python myAI.py
+
+This will start the Jarvis assistant, and you can interact with it using voice commands or text input.
+
 Getting Started
-After running the application, a GUI will appear.
-Press ESC to skip the intro or wait for it to complete.
-Jarvis will give you instructions and prompt you for a password.
-Enter the password: phenom (Note: Nothing will appear on the screen while typing. You have 5 attempts to enter the correct password).
-If you enter the correct password, Jarvis will greet you with "Welcome back, boss."
-Important Note
-Make sure to place your actual API keys in the .env file before using Jarvis.
+    1.After running the application, a GUI will appear.
+    2.Press ESC to skip the intro or wait for it to complete.
+    3.Jarvis will give you instructions and prompt you for a password.
+    4.Enter the password: phenom. (Note: Nothing will appear on the screen while typing. You have 5 attempts to enter the correct password.)
+    5.If you enter the correct password, Jarvis will greet you with "Welcome back, boss."
+
+Important Note:
+    Make sure to place your actual API keys in the .env file before using Jarvis.
 
 Custom Prompts
-You can use the following custom prompts to interact with Jarvis:
+    You can use the following custom prompts to interact with Jarvis:
 
-Introduction:
-"who are you"
-"what is your name"
-"introduce yourself jarvis"
-"introduce yourself"
-"tell me something about yourself"
-Application Management:
-"open powerpoint"
-"open presentation"
-"shut down"
-"jarvis shutdown the system"
-"check battery status"
-Email Management:
-"send email"
-"jarvis send email to hp@gmail.com"
-"jarvis read my emails"
-"jarvis check for new messages"
-Code Generation:
-"jarvis write code for me"
-"generate code for me"
-"open code generator"
-Schedule Management:
-"check my schedule"
-"what is my schedule today"
-"add event"
-Weather and Location:
-"check weather"
-"open weather"
-"location"
-News Updates:
-"jarvis give me trending news"
-"jarvis what is the news today"
-Internet Check:
-"jarvis check internet speed"
-"what is my internet speed"
-"check internet connection"
+1.Introduction:
+
+    "who are you"
+    "what is your name"
+    "introduce yourself jarvis"
+    "introduce yourself"
+    "tell me something about yourself"
+
+2.Application Management:
+
+    "open powerpoint"
+    "open presentation"
+    "shut down"
+    "jarvis shutdown the system"
+    "check battery status"
+
+3.Email Management:
+
+    "send email"
+    "jarvis send email to hp@gmail.com"
+    "jarvis read my emails"
+    "jarvis check for new messages"
+
+4.Code Generation:
+
+    "jarvis write code for me"
+    "generate code for me"
+    "open code generator"
+5.Schedule Management:
+
+    "check my schedule"
+    "what is my schedule today"
+    "add event"
+
+6.Weather and Location:
+
+    "check weather"
+    "open weather"
+    "location"
+
+7.News Updates:
+
+    "jarvis give me trending news"
+    "jarvis what is the news today"
+
+8.Internet Check:
+
+    "jarvis check internet speed"
+    "what is my internet speed"
+    "check internet connection"
+
 Stopping Jarvis
 To stop Jarvis, you can use the following phrases:
 
-"jarvis stop"
-"stop it jarvis"
-"shut up jarvis"
-"enough jarvis"
-"goodbye jarvis"
+    "jarvis stop"
+    "stop it jarvis"
+    "shut up jarvis"
+    "enough jarvis"
+    "goodbye jarvis"    
 
 ## Contact Information
 - LinkedIn: [Shaik Sameer Hussain](https://www.linkedin.com/in/shaik-sameer-hussain-b88323250/)
