@@ -91,6 +91,22 @@ NEWS_API_KEY=your_news_api_key_here
 EMAIL=your_email_id
 
 
+Install FFmpeg: ffpyplayer relies on FFmpeg for media playback. You may need to install FFmpeg separately. Here’s how:
+
+Windows:
+
+Download the FFmpeg release from FFmpeg's official website.
+Extract the contents to a folder (e.g., C:\ffmpeg).
+Add the bin directory to your system PATH:
+Right-click on "This PC" or "Computer" on the desktop or in File Explorer.
+Select "Properties".
+Click on "Advanced system settings".
+Click on "Environment Variables".
+Under "System variables", find the "Path" variable, select it, and click "Edit".
+Click "New" and add the path to the bin folder of the FFmpeg installation (e.g., C:\ffmpeg\bin).
+Click "OK" to close all dialog boxes.
+
+
 To install the required packages, run:
 
 "pip install -r requirements.txt"
