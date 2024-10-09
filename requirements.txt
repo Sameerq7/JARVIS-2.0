@@ -1,6 +1,5 @@
 numpy
 pyttsx3
-msvcrt
 google-api-core
 google-auth-oauthlib
 google-auth
@@ -16,3 +15,7 @@ whisper
 sounddevice
 opencv-python
 pydub
+wikipedia-api
+speedtest-cli
+keyboard
+psutil
