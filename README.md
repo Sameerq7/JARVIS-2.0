@@ -95,7 +95,7 @@ Install FFmpeg: ffpyplayer relies on FFmpeg for media playback. You may need to 
 
 Windows:
 
-Download the FFmpeg release from FFmpeg's official website.
+Download the FFmpeg release from [FFmpeg's official website](https://ffmpeg.org/download.html)
 
 Extract the contents to a folder (e.g., C:\ffmpeg).
 
