@@ -8,6 +8,8 @@ import getpass
 from google.api_core.exceptions import InternalServerError
 from threading import Thread
 import smtplib
+import simpleaudio as sa
+from threading import Thread, Event
 from features.checkInternet import *
 import threading
 from email.mime.multipart import MIMEMultipart
@@ -53,7 +55,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module='whisper')
 def get_absolute_path(relative_path):
     return os.path.join(os.path.dirname(__file__), relative_path)
 
-# Initialize Pygame mixer
+# Initialifze Pygame mixer
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=8192)
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 # Set your API key
@@ -62,6 +64,63 @@ api_key = os.getenv("API_KEY")  # Ensure your .env file has this variable
 
 genai.configure(api_key=api_key)
 whisper_model = whisper.load_model("base")
+
+
+def PlayVideo2(video_path):
+    def extract_audio(video_path, audio_path):
+        command = [
+            'ffmpeg', '-i', video_path, 
+            '-q:a', '0', '-map', 'a', audio_path
+        ]
+        with open(os.devnull, 'w') as devnull:
+            subprocess.run(command, stdout=devnull, stderr=devnull)
+
+    def play_audio(filename, stop_event):
+        wave_obj = sa.WaveObject.from_wave_file(filename)
+        play_obj = wave_obj.play()
+        
+        while not stop_event.is_set() and play_obj.is_playing():
+            pass
+
+    audio_path = "audio.wav"  # Temporary audio file
+    extract_audio(video_path, audio_path)  # Extract audio from video
+
+    stop_event = Event()  # Create an event to stop audio playback
+    
+    # Load the video
+    video = cv2.VideoCapture(video_path)
+
+    # Set the window to full screen
+    cv2.namedWindow("Starting JARVIS 2.0", cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("Starting JARVIS 2.0", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+    # Start audio in a separate thread
+    audio_thread = Thread(target=play_audio, args=(audio_path, stop_event))
+    audio_thread.start()
+    
+    while True:
+        grabbed, frame = video.read()
+
+        if not grabbed:
+            print_slow_and_speak("System Started Boss")
+            break
+
+        # Display the video frame
+        cv2.imshow("Starting JARVIS 2.0", frame)
+
+        # Check for 'Esc' key press
+        key = cv2.waitKey(28)  # Adjust as needed
+        if key == 27:  # 27 is the ASCII code for the Esc key
+            stop_event.set()  # Signal the audio thread to stop
+            break
+
+    video.release()
+    cv2.destroyAllWindows()
+    audio_thread.join()  # Wait for the audio thread to finish
+
+    # Clean up the temporary audio file
+    if os.path.exists(audio_path):
+        os.remove(audio_path)
 
 def PlayVideo(video_path):
     def PlayAudio(get_frame, player):
@@ -1230,8 +1289,8 @@ def main():
 
 if __name__ == "__main__":
     video_file = get_absolute_path("media/Jarvis_intro_video.mp4")
-    PlayVideo(video_file)
-    time.sleep(2)
+    # PlayVideo(video_file)
+    # time.sleep(2)
     #main()
     if ask_user_name():
         main()
