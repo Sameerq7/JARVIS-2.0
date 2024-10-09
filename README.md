@@ -96,20 +96,39 @@ Install FFmpeg: ffpyplayer relies on FFmpeg for media playback. You may need to 
 Windows:
 
 Download the FFmpeg release from FFmpeg's official website.
+
 Extract the contents to a folder (e.g., C:\ffmpeg).
+
 Add the bin directory to your system PATH:
-Right-click on "This PC" or "Computer" on the desktop or in File Explorer.
-Select "Properties".
-Click on "Advanced system settings".
-Click on "Environment Variables".
-Under "System variables", find the "Path" variable, select it, and click "Edit".
-Click "New" and add the path to the bin folder of the FFmpeg installation (e.g., C:\ffmpeg\bin).
-Click "OK" to close all dialog boxes.
+
+1. Right-click on **Computer** or **This PC** and select **Properties**.
+
+2. Click on **Advanced system settings** on the left side.
+
+3. Click on **Environment Variables**.
+
+4. Under **System Variables**, scroll down and find the **Path** variable, then click **Edit**
+
+5. Click **New** and enter the path to the bin directory
+
+6. Click **OK** to close all the windows.
+
+**Linux:**
+
+1. **Install FFmpeg**: Download the FFmpeg release from [FFmpeg's official website](https://ffmpeg.org/download.html) and extract it. Then, add the `bin` directory to your system PATH.
+
+2. **Check Python Version Compatibility**: Make sure **ffpyplayer** is compatible with your version of **Python (3.12.2)**. You may want to check the documentation or the **PyPI page for ffpyplayer** for compatibility information.
+
+3. **Run as Administrator**: Sometimes, permission issues can prevent DLLs from loading. Try **running your Python script as an administrator**.
+
+4. **Install Microsoft Visual C++ Redistributable**: If you're on **Windows**, ensure that you have the latest version of the **Microsoft Visual C++ Redistributable** installed. This is often required for many Python libraries that depend on **C/C++ extensions**.
+
+5. **Check for Missing DLLs**: If the error persists, you can use a tool like **Dependency Walker** to check for missing DLLs when trying to load **ffpyplayer**. This tool will help you identify which specific DLLs are causing the issue.
 
 
 To install the required packages, run:
 
-"pip install -r requirements.txt"
+    "pip install -r requirements.txt"
 
 
 ## Usage Instructions
