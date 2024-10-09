@@ -128,7 +128,7 @@ Add the bin directory to your system PATH:
 
 To install the required packages, run:
 
-    "pip install -r requirements.txt"
+    pip install -r requirements.txt
 
 
 ## Usage Instructions
