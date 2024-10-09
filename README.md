@@ -102,7 +102,7 @@ To run Jarvis, execute the following command in your terminal:
 
 This will start the Jarvis assistant, and you can interact with it using voice commands or text input.
 
-Getting Started
+**Getting Started**
 
 1.After running the application, a GUI will appear.
 
@@ -114,73 +114,97 @@ Getting Started
 
 5.If you enter the correct password, Jarvis will greet you with "Welcome back, boss."
 
-Important Note:
+**Important Note:**
 
 Make sure to place your actual API keys in the .env file before using Jarvis.
 
-Custom Prompts
+**Custom Prompts**
 
 You can use the following custom prompts to interact with Jarvis:
 
-1.Introduction:
+**1.Introduction:**
 
 "who are you"
+
 "what is your name"
+
 "introduce yourself jarvis"
+
 "introduce yourself"
+
 "tell me something about yourself"
 
-2.Application Management:
+**2.Application Management:**
 
 "open powerpoint"
+
 "open presentation"
+
 "shut down"
+
 "jarvis shutdown the system"
+
 "check battery status"
 
-3.Email Management:
+**3.Email Management:**
 
 "send email"
+
 "jarvis send email to hp@gmail.com"
+
 "jarvis read my emails"
+
 "jarvis check for new messages"
 
-4.Code Generation:
+**4.Code Generation:**
 
 "jarvis write code for me"
+
 "generate code for me"
+
 "open code generator"
 
 5.Schedule Management:
 
 "check my schedule"
+
 "what is my schedule today"
+
 "add event"
 
-6.Weather and Location:
+**6.Weather and Location:**
 
 "check weather"
+
 "open weather"
+
 "location"
 
-7.News Updates:
+**7.News Updates:**
 
 "jarvis give me trending news"
+
 "jarvis what is the news today"
 
-8.Internet Check:
+**8.Internet Check:**
 
 "jarvis check internet speed"
+
 "what is my internet speed"
+
 "check internet connection"
 
-Stopping Jarvis
+**Stopping Jarvis**
 To stop Jarvis, you can use the following phrases:
 
 "jarvis stop"
+
 "stop it jarvis"
+
 "shut up jarvis"
+
 "enough jarvis"
+
 "goodbye jarvis"    
 
 ## Contact Information
