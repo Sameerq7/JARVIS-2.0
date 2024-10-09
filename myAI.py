@@ -323,7 +323,7 @@ def greet_user():
     else:
         greeting = "Good evening..."
     print_slow_and_speak(greeting)
-    print_slow_and_speak("Welcome Back...Boss, All Systems are fully operational")
+    print_slow_and_speak("Welcome Back Boss, All Systems are fully operational")
 
 def play_audio(file_path):
     """Play an audio file."""
@@ -1289,8 +1289,8 @@ def main():
 
 if __name__ == "__main__":
     video_file = get_absolute_path("media/Jarvis_intro_video.mp4")
-    # PlayVideo(video_file)
-    # time.sleep(2)
+    PlayVideo(video_file)
+    time.sleep(2)
     #main()
     if ask_user_name():
         main()
