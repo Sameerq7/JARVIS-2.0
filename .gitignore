@@ -13,6 +13,7 @@ vosk-model-small-en-us-0.15/
 token.pickle
 sample.py
 whatsapp.py
+myAI.py
 
 # Ignore logs
 *.log
