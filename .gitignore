@@ -18,3 +18,4 @@ token.pickle
 
 # Node modules
 node_modules/
+credentials.json
