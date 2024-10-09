@@ -29,7 +29,7 @@ from geopy.distance import great_circle
 import psutil
 from PyPDF2 import PdfReader
 import pygame
-from ffpyplayer.player import MediaPlayer
+#from ffpyplayer.player import MediaPlayer
 import google.generativeai as genai
 from dotenv import load_dotenv
 from datetime import datetime, timezone,timedelta
@@ -122,43 +122,43 @@ def PlayVideo2(video_path):
     if os.path.exists(audio_path):
         os.remove(audio_path)
 
-def PlayVideo(video_path):
-    def PlayAudio(get_frame, player):
-        while True:
-            frame, val = get_frame()
-            if val != 'eof' and frame is not None:
-                img, t = frame
-            else:
-                break
+# def PlayVideo(video_path):
+#     def PlayAudio(get_frame, player):
+#         while True:
+#             frame, val = get_frame()
+#             if val != 'eof' and frame is not None:
+#                 img, t = frame
+#             else:
+#                 break
 
-    video = cv2.VideoCapture(video_path)
-    player = MediaPlayer(video_path)
+#     video = cv2.VideoCapture(video_path)
+#     player = MediaPlayer(video_path)
     
-    # Set the window to full screen
-    cv2.namedWindow("StartIng JARVIS 2.0", cv2.WND_PROP_FULLSCREEN)
-    cv2.setWindowProperty("StartIng JARVIS 2.0", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+#     # Set the window to full screen
+#     cv2.namedWindow("StartIng JARVIS 2.0", cv2.WND_PROP_FULLSCREEN)
+#     cv2.setWindowProperty("StartIng JARVIS 2.0", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     
-    while True:
-        grabbed, frame = video.read()
-        audio_frame, val = player.get_frame()
+#     while True:
+#         grabbed, frame = video.read()
+#         audio_frame, val = player.get_frame()
 
-        if not grabbed:
-            print_slow_and_speak("System Started Boss")
-            break
+#         if not grabbed:
+#             print_slow_and_speak("System Started Boss")
+#             break
 
-        # Show the video frame
-        cv2.imshow("StartIng JARVIS 2.0", frame)
+#         # Show the video frame
+#         cv2.imshow("StartIng JARVIS 2.0", frame)
 
-        # Check for 'Esc' key press
-        key = cv2.waitKey(28)
-        if key == 27:  # 27 is the ASCII code for the Esc key
-            break
+#         # Check for 'Esc' key press
+#         key = cv2.waitKey(28)
+#         if key == 27:  # 27 is the ASCII code for the Esc key
+#             break
         
-        if val != 'eof' and audio_frame is not None:
-            img, t = audio_frame
+#         if val != 'eof' and audio_frame is not None:
+#             img, t = audio_frame
 
-    video.release()
-    cv2.destroyAllWindows()
+#     video.release()
+#     cv2.destroyAllWindows()
 
 def truncate_response(text, max_lines=4):
     lines = text.split('\n')
@@ -1289,8 +1289,8 @@ def main():
 
 if __name__ == "__main__":
     video_file = get_absolute_path("media/Jarvis_intro_video.mp4")
-    PlayVideo(video_file)
-    time.sleep(2)
+    #PlayVideo(video_file)
+    #time.sleep(2)
     #main()
     if ask_user_name():
         main()
