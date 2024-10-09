@@ -134,7 +134,7 @@ To install the required packages, run:
 ## Usage Instructions
 To run Jarvis, execute the following command in your terminal:
 
-    "python myAI.py"
+    python myAI.py
 
 This will start the Jarvis assistant, and you can interact with it using voice commands or text input.
 
