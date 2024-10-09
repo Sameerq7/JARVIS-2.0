@@ -54,7 +54,46 @@ Jarvis is a versatile virtual assistant that performs tasks like code generation
 - Speech recognition and text-to-speech libraries for interactive user experience.
 
 ## Installation Instructions
-(Instructions to be specified later)
+To get started, create a `.env` file in the root directory of the project and add the following environment variables:
+
+1. **Gemini API Key** (`API_KEY`):
+   - To get the Gemini API key, visit the [Gemini API website](https://gemini.com/).
+   - Sign up or log in to your account.
+   - Navigate to the API section to create a new API key.
+   - Copy the generated API key and paste it into your `.env` file.
+API_KEY=your_gemini_api_key_here
+
+2. **Email App Password** (`EMAIL_APP_PASSWORD`):
+- If you are using Gmail, you may need to set up [App Passwords](https://support.google.com/accounts/answer/185201) if you have two-factor authentication enabled.
+- Log in to your Google account, go to **Security** settings, and under **Signing in to Google**, look for **App passwords**.
+- Select the app and device you want to generate the password for and click **Generate**.
+- Copy the generated password and paste it into your `.env` file.
+EMAIL_APP_PASSWORD=your_email_app_password_here
+
+3. **OpenWeather API Key** (`OPENWEATHER_API_KEY`):
+- Visit the [OpenWeather](https://openweathermap.org/api) website.
+- Sign up for an account if you don’t have one.
+- Once logged in, navigate to the **API keys** section and generate a new API key.
+- Copy the generated API key and paste it into your `.env` file.
+OPENWEATHER_API_KEY=your_openweather_api_key_here
+
+
+4. **News API Key** (`NEWS_API_KEY`):
+- Go to the [News API](https://newsapi.org/) website.
+- Sign up for an account and log in.
+- Navigate to the **API keys** section to obtain your key.
+- Copy the API key and paste it into your `.env` file.
+NEWS_API_KEY=your_news_api_key_here
+
+
+5. **User Email** (`EMAIL`):
+- Enter the email address for which you created the app password in the `.env` file. This email will be used for sending emails.
+EMAIL=your_email_id
+
+
+To install the required packages, run:
+pip install -r requirements.txt
+
 
 ## Usage Instructions
 (Usage instructions to be specified later)
