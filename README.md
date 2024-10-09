@@ -98,11 +98,12 @@ pip install -r requirements.txt
 ## Usage Instructions
 To run Jarvis, execute the following command in your terminal:
 
-python myAI.py
+"python myAI.py"
 
 This will start the Jarvis assistant, and you can interact with it using voice commands or text input.
 
 Getting Started
+
     1.After running the application, a GUI will appear.
     2.Press ESC to skip the intro or wait for it to complete.
     3.Jarvis will give you instructions and prompt you for a password.
