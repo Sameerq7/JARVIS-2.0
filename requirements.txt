@@ -10,7 +10,6 @@ opencv_python==4.10.0.84
 psutil==6.0.0
 pydub==0.25.1
 pygame==2.6.1
-pygame==2.6.0
 PyPDF2==3.0.1
 python-vlc
 pyperclip==1.9.0
