@@ -29,7 +29,7 @@ from geopy.distance import great_circle
 import psutil
 from PyPDF2 import PdfReader
 import pygame
-#from ffpyplayer.player import MediaPlayer
+from ffpyplayer.player import MediaPlayer
 import google.generativeai as genai
 from dotenv import load_dotenv
 from datetime import datetime, timezone,timedelta
@@ -63,7 +63,7 @@ load_dotenv()
 api_key = os.getenv("API_KEY")  # Ensure your .env file has this variable
 
 genai.configure(api_key=api_key)
-whisper_model = whisper.load_model("base")
+whisper_model = whisper.load_model("small")
 
 
 def PlayVideo2(video_path):
@@ -122,43 +122,43 @@ def PlayVideo2(video_path):
     if os.path.exists(audio_path):
         os.remove(audio_path)
 
-# def PlayVideo(video_path):
-#     def PlayAudio(get_frame, player):
-#         while True:
-#             frame, val = get_frame()
-#             if val != 'eof' and frame is not None:
-#                 img, t = frame
-#             else:
-#                 break
+def PlayVideo(video_path):
+    def PlayAudio(get_frame, player):
+        while True:
+            frame, val = get_frame()
+            if val != 'eof' and frame is not None:
+                img, t = frame
+            else:
+                break
 
-#     video = cv2.VideoCapture(video_path)
-#     player = MediaPlayer(video_path)
+    video = cv2.VideoCapture(video_path)
+    player = MediaPlayer(video_path)
     
-#     # Set the window to full screen
-#     cv2.namedWindow("StartIng JARVIS 2.0", cv2.WND_PROP_FULLSCREEN)
-#     cv2.setWindowProperty("StartIng JARVIS 2.0", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    # Set the window to full screen
+    cv2.namedWindow("StartIng JARVIS 2.0", cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("StartIng JARVIS 2.0", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     
-#     while True:
-#         grabbed, frame = video.read()
-#         audio_frame, val = player.get_frame()
+    while True:
+        grabbed, frame = video.read()
+        audio_frame, val = player.get_frame()
 
-#         if not grabbed:
-#             print_slow_and_speak("System Started Boss")
-#             break
+        if not grabbed:
+            print_slow_and_speak("System Started Boss")
+            break
 
-#         # Show the video frame
-#         cv2.imshow("StartIng JARVIS 2.0", frame)
+        # Show the video frame
+        cv2.imshow("StartIng JARVIS 2.0", frame)
 
-#         # Check for 'Esc' key press
-#         key = cv2.waitKey(28)
-#         if key == 27:  # 27 is the ASCII code for the Esc key
-#             break
+        # Check for 'Esc' key press
+        key = cv2.waitKey(28)
+        if key == 27:  # 27 is the ASCII code for the Esc key
+            break
         
-#         if val != 'eof' and audio_frame is not None:
-#             img, t = audio_frame
+        if val != 'eof' and audio_frame is not None:
+            img, t = audio_frame
 
-#     video.release()
-#     cv2.destroyAllWindows()
+    video.release()
+    cv2.destroyAllWindows()
 
 def truncate_response(text, max_lines=4):
     lines = text.split('\n')
@@ -463,8 +463,8 @@ def shutdown_laptop():
 
 
 def ask_user_name():
-    starting_intro_of_jarvis = get_absolute_path("media/jarvis_small_intro.wav")
-    play_audio(starting_intro_of_jarvis)
+    # starting_intro_of_jarvis = get_absolute_path("media/jarvis_small_intro.wav")
+    # play_audio(starting_intro_of_jarvis)
     print_slow("Welcome to JARVIS 2.0")
     
     attempts = 0
@@ -485,7 +485,7 @@ def ask_user_name():
 
     while attempts < max_attempts:
         remaining_attempts = max_attempts - attempts
-        prompt_message = f"Sir, you have {remaining_attempts} attempt{'s' if remaining_attempts > 1 else ''} left out of {max_attempts}. Please specify the code word carefully >>"
+        prompt_message = f"Sir, you have {remaining_attempts} attempt{'s' if remaining_attempts > 1 else ''} left out of {max_attempts}. Please Enter the code word carefully"
         print(prompt_message)
         
         speak_and_play(prompt_message)
@@ -1165,6 +1165,7 @@ def main():
         "jarvis scan the gmail inbox": "read_recent_emails",
         "jarvis check mails": "read_recent_emails",
         "jarvis check for new messages": "read_recent_emails",
+        "check for new messages": "read_recent_emails",
         "gmail": "open_gmail",
         "jarvis give me trending news":"fetch_and_play_news",
         "jarvis what is the news":"fetch_and_play_news",
@@ -1196,7 +1197,7 @@ def main():
         
         save_audio_to_wav(np.array(audio, dtype=np.int16), 16000, temp_wav_filename)
         
-        result = whisper_model.transcribe(temp_wav_filename)
+        result = whisper_model.transcribe(temp_wav_filename,language="en")
         transcription = result.get("text", "No text found")
         
         print("Sameer Boss:", transcription)
@@ -1289,8 +1290,8 @@ def main():
 
 if __name__ == "__main__":
     video_file = get_absolute_path("media/Jarvis_intro_video.mp4")
-    #PlayVideo(video_file)
-    #time.sleep(2)
+    # PlayVideo(video_file)
+    # time.sleep(2)
     #main()
     if ask_user_name():
         main()
