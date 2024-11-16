@@ -1053,7 +1053,7 @@ def main():
     os.makedirs(jarvis_folder, exist_ok=True)
     
     #whisper_model = whisper.load_model("base")
-    gemini_model = genai.GenerativeModel("gemini-1.5-flash")
+    gemini_model = genai.GenerativeModel("gemini-1.5-pro")
     
     greet_user()
 
