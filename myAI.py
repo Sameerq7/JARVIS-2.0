@@ -486,9 +486,7 @@ def ask_user_name():
     while attempts < max_attempts:
         remaining_attempts = max_attempts - attempts
         prompt_message = f"Sir, you have {remaining_attempts} attempt{'s' if remaining_attempts > 1 else ''} left out of {max_attempts}. Please Enter the code word carefully"
-        print(prompt_message)
-        
-        speak_and_play(prompt_message)
+        print_slow_and_speak(prompt_message)
 
         # Hide user input
         user_input = getpass.getpass("Please enter the code word: ")
