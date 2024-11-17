@@ -13,6 +13,9 @@ vosk-model-small-en-us-0.15/
 token.pickle
 sample.py
 temp
+w2.py
+
+PyWhatKit_DB.txt
 jarvisResponse
 features/temp
 whatsapp.py
