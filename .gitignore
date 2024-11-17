@@ -12,6 +12,9 @@ venv/
 vosk-model-small-en-us-0.15/
 token.pickle
 sample.py
+temp
+jarvisResponse
+features/temp
 whatsapp.py
 desktop.ini
 Dockerfile
