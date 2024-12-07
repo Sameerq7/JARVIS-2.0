@@ -291,6 +291,17 @@ def text_to_speech(text, filename):
     
     # Clean up temporary file
     os.remove(temp_filename)
+# def text_to_speech(text, lang="en"):
+#     engine = pyttsx3.init()
+#     # Configure voice properties for Hinglish (Hindi-English mix)
+#     voices = engine.getProperty('voices')
+#     if lang == "hi":
+#         engine.setProperty('voice', voices[0].id)  # Set Hindi voice (may vary by TTS setup)
+#     else:
+#         engine.setProperty('voice', voices[0].id)  # Default English voice
+#     engine.setProperty('rate', 150)  # Adjust speed
+#     engine.say(text)
+#     engine.runAndWait()
 
 def get_gemini_response(model, message):
     retry_attempts = 3  # Set the number of retry attempts
@@ -465,7 +476,7 @@ def shutdown_laptop():
 def ask_user_name():
     # starting_intro_of_jarvis = get_absolute_path("media/jarvis_small_intro.wav")
     # play_audio(starting_intro_of_jarvis)
-    print_slow("Welcome to JARVIS 2.0")
+    print("Welcome to JARVIS 2.0")
     
     attempts = 0
     max_attempts = 5
@@ -484,9 +495,9 @@ def ask_user_name():
     valid_names = [''.join(chr(char) for char in name) for name in valid_names_ascii]
 
     while attempts < max_attempts:
-        remaining_attempts = max_attempts - attempts
-        prompt_message = f"Sir, you have {remaining_attempts} attempt{'s' if remaining_attempts > 1 else ''} left out of {max_attempts}. Please Enter the code word carefully"
-        print_slow_and_speak(prompt_message)
+        # remaining_attempts = max_attempts - attempts
+        # prompt_message = f"Sir, you have {remaining_attempts} attempt{'s' if remaining_attempts > 1 else ''} left out of {max_attempts}. Please Enter the code word carefully"
+        # print_slow_and_speak(prompt_message)
 
         # Hide user input
         user_input = getpass.getpass("Please enter the code word: ")
@@ -1095,6 +1106,9 @@ def main():
         "send email":"send_email",
         "jarvis send email":"send_email",
         "send email to hp":"send_email",
+        "jarvis can you write a mail for me":"send_email",
+        "jarvis can you write a email for me":"send_email",
+        "can you write a email for me":"send_email",
         "send email to hp@gmail.com":"send_email",
         "start sending email":"send_email",
         "sleep":"shutdown_laptop",
@@ -1157,14 +1171,12 @@ def main():
         "college website": "open_cmrtc",
         "open my mail": "open_gmail",
         "open email": "open_gmail",
-        "email": "open_gmail",
         "jarvis read my emails": "read_recent_emails",
         "jarvis read my mails": "read_recent_emails",
         "jarvis scan the gmail inbox": "read_recent_emails",
         "jarvis check mails": "read_recent_emails",
         "jarvis check for new messages": "read_recent_emails",
         "check for new messages": "read_recent_emails",
-        "gmail": "open_gmail",
         "jarvis give me trending news":"fetch_and_play_news",
         "jarvis what is the news":"fetch_and_play_news",
         "jarvis what is the news today":"fetch_and_play_news",
@@ -1278,7 +1290,7 @@ def main():
             truncated_response = truncate_response(processed_response)
             timestamp=time.strftime("%Y%m%d_%H%M%S")
             response_file = os.path.join(jarvis_folder, f"jarvis_response_{timestamp}.wav")
-            text_to_speech(truncated_response, response_file)
+            text_to_speech(truncated_response,response_file)
             
             print("Jarvis:", processed_response)
             
@@ -1291,6 +1303,7 @@ if __name__ == "__main__":
     # PlayVideo(video_file)
     # time.sleep(2)
     #main()
+
     if ask_user_name():
         main()
     else:

@@ -13,6 +13,9 @@ vosk-model-small-en-us-0.15/
 token.pickle
 sample.py
 temp
+t.py
+speech.mp3
+index.py
 start_AI.bat
 w2.py
 
