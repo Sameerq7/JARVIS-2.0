@@ -1056,6 +1056,17 @@ def send_email():
         print_slow_and_speak(f'Failed to send email. Error: {e}')
         # speak_and_play("Boss...! Failed to send the email.")
 
+def start_execution():
+    global stop_execution
+    stop_execution = False
+    thread = threading.Thread(target=main)
+    thread.start()
+
+def stop_execution_func():
+    global stop_execution
+    stop_execution = True
+    print("Stopping execution...")
+
 def main():
     duration = 5  # seconds
     output_folder = get_absolute_path("MyVoice")
