@@ -15,7 +15,6 @@ import threading
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import keyboard
-from features.news import fetch_and_play_news
 from tkinter import messagebox, font
 import geocoder
 import tkinter as tk
@@ -34,7 +33,6 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from datetime import datetime, timezone,timedelta
 import subprocess
-from features.copyMatter_from_Wikipedia import create_gui
 from pydub import AudioSegment
 import webbrowser
 import sys
@@ -44,8 +42,10 @@ import warnings
 import tempfile
 import whisper
 import sounddevice as sd
+from features.copyMatter_from_Wikipedia import create_gui
 from features.prints import print_slow
 from features.print_slow_and_speak import print_slow_and_speak
+from features.news import fetch_and_play_news
 from features.reademail import read_recent_emails
 from features.playalong import *
 
@@ -242,6 +242,7 @@ def record_audio(duration, samplerate=16000):
     sd.wait()
     return recording.flatten()
 
+
 def play_video(video_path):
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -328,11 +329,11 @@ def process_response_text(text):
 def greet_user():
     current_hour = datetime.now().hour
     if 5 <= current_hour < 12:
-        greeting = "Good morning.."
+        greeting = "Good morning"
     elif 12 <= current_hour < 17:
-        greeting = "Good afternoon.."
+        greeting = "Good afternoon"
     else:
-        greeting = "Good evening..."
+        greeting = "Good evening"
     print_slow_and_speak(greeting)
     print_slow_and_speak("Welcome Back Boss, All Systems are fully operational")
 
@@ -912,7 +913,7 @@ class CodeGeneratorApp:
 
     def generate_code(self):
         problem = self.problem_entry.get()
-        gemini_model = genai.GenerativeModel("gemini-1.5-flash")
+        gemini_model = genai.GenerativeModel("gemini-1.5-flash-8b")
         response = get_gemini_response(gemini_model,problem)
         code = self.extract_code(response)
         self.code_output.delete(1.0, tk.END)
@@ -1075,12 +1076,13 @@ def main():
     os.makedirs(jarvis_folder, exist_ok=True)
     
     #whisper_model = whisper.load_model("base")
-    gemini_model = genai.GenerativeModel("gemini-1.5-pro")
+    gemini_model = genai.GenerativeModel("gemini-1.5-flash-8b")
     
     greet_user()
 
     custom_responses = {
         "what is my name": get_absolute_path("media/Introductory_speech_of_me.wav"),
+        #"sameer": get_absolute_path("media/KGF_BGMI.wav"),
         "jarvis introduce myself": get_absolute_path("media/Introductory_speech_of_me.wav"),
         "who made you": get_absolute_path("media/Introductory_speech_of_me.wav"),
         "who created you": get_absolute_path("media/Introductory_speech_of_me.wav"),
@@ -1290,7 +1292,7 @@ def main():
                 if os.path.isfile(matched_response):
                         output_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav').name
                         if "Introductory_speech_of_me" in matched_response:
-                            play_background_with_intro(matched_response, get_absolute_path("media/Boss_back.wav"), background_volume=0.3)
+                            play_background_with_intro(matched_response, get_absolute_path("media/KGF_BGMI.wav"), background_volume=0.5)
                         else:
                             play_background_with_intro(matched_response, get_absolute_path("media/Tiger_back.wav"), background_volume=0.3)
                 else:
@@ -1313,14 +1315,14 @@ if __name__ == "__main__":
     video_file = get_absolute_path("media/Jarvis_intro_video.mp4")
     # PlayVideo(video_file)
     # time.sleep(2)
-    #main()
+    main()
 
-    if ask_user_name():
-        main()
-    else:
-        print("Sorry, You are not my boss")
-        print("Incorrect name provided. Exiting...")
-        sys.exit()
+    # if ask_user_name():
+    #     main()
+    # else:
+    #     print("Sorry, You are not my boss")
+    #     print("Incorrect name provided. Exiting...")
+    #     sys.exit()
 
 
 
