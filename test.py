@@ -6,21 +6,9 @@ from PyQt5.QtCore import QProcess
 import sys
 import os
 import time
+import signal
+import psutil
 
-
-def print_slow(text, delay=0.1):
-    output = ''
-    for char in text:
-        output += char
-        sys.stdout.write(char)
-        sys.stdout.flush()
-        time.sleep(delay)
-    sys.stdout.write('\n')
-    return output
-
-
-# Add the 'features' directory to the system path
-sys.path.append(r'C:\Users\hp\Desktop\JARVIS2.0\features')
 
 
 class Ui_MainWindow(object):
@@ -48,6 +36,13 @@ class Ui_MainWindow(object):
         self.pushButton.setStyleSheet("background-color: rgb(0, 170, 255);\n"
                                       "font: 75 18pt \"MS Shell Dlg 2\";")
         self.pushButton.setObjectName("pushButton")
+
+        # Add the Pause button
+        self.pushButton_pause = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_pause.setGeometry(QtCore.QRect(1060, 790, 101, 51))  # Positioned beside the Run button
+        self.pushButton_pause.setStyleSheet("background-color: rgb(255, 255, 0);\n"
+                                            "font: 75 18pt \"MS Shell Dlg 2\";")
+        self.pushButton_pause.setObjectName("pushButton_pause")
 
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(1310, 790, 101, 51))
@@ -99,10 +94,11 @@ class Ui_MainWindow(object):
 
         self.pushButton.clicked.connect(self.startJarvis)
         self.pushButton_2.clicked.connect(self.stopJarvis)
+        self.pushButton_pause.clicked.connect(self.pauseJarvis)
 
         # Set up the QMediaPlayer for background music
         self.mediaPlayer = QMediaPlayer()
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(r"C:\Users\hp\Desktop\JARVIS2.0\media\KGF_BGMI.wav")))
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(r"media/KGF_BGMI.wav")))
         self.mediaPlayer.setVolume(50)  # Set the volume (0-100)
         self.mediaPlayer.play()  # Start playing
 
@@ -123,6 +119,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Run"))
         self.pushButton_2.setText(_translate("MainWindow", "Exit"))
+        self.pushButton_pause.setText(_translate("MainWindow", "Pause"))
 
     def startJarvis(self):
         self.process.start(".venv/Scripts/python.exe", ["myAI.py"])
@@ -130,16 +127,31 @@ class Ui_MainWindow(object):
     def stopJarvis(self):
         self.process.terminate()
 
+
+    def pauseJarvis(self):
+        try:
+            pid = self.process.pid()  # Get the process ID of the running process
+            if pid:
+                pid_int = int(pid)  # Convert the pid to an integer if necessary
+                p = psutil.Process(pid_int)
+                p.suspend()  # Suspend the process
+                self.textBrowser_3.append("Jarvis process paused.")
+            else:
+                self.textBrowser_3.append("No process found to pause.")
+        except Exception as e:
+             self.textBrowser_3.append(f"Error while pausing: {e}")  
+
+
     def dataReady(self):
         output = self.process.readAll().data().decode()
-        if output:
-            if len(output) == 1:
-                self.buffer += output
-                if ' ' in self.buffer or '\n' in self.buffer:
-                    self.textBrowser_3.append(self.buffer.strip())
-                    self.buffer = ''
-            else:
-                self.textBrowser_3.append(output.strip())
+        # if output:
+        #     if len(output) == 1:
+        #         self.buffer += output
+        #         if ' ' in self.buffer or '\n' in self.buffer:
+        #             self.textBrowser_3.append(self.buffer.strip())
+        #             self.buffer = ''
+        #     else:
+        self.textBrowser_3.append(output.strip())
 
 
 if __name__ == "__main__":

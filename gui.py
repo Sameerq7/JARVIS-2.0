@@ -16,7 +16,7 @@ def print_slow(text, delay=0.1):
 
 
 # Add the 'features' directory to the system path
-sys.path.append(r'C:\Users\hp\Desktop\JARVIS2.0\features')
+sys.path.append(r'features')
 
 
 class Ui_MainWindow(object):
@@ -121,7 +121,7 @@ class Ui_MainWindow(object):
 
     def startJarvis(self):
         # Use the virtual environment's Python interpreter
-        self.process.start("C:/Users/hp/Desktop/JARVIS2.0/.venv/Scripts/python.exe", ["myAI.py"])
+        self.process.start(".venv/Scripts/python.exe", ["myAI.py"])
 
     def stopJarvis(self):
         # Kill the process to stop Jarvis

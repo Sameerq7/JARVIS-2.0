@@ -1070,6 +1070,10 @@ def stop_execution_func():
     stop_execution = True
     print("Stopping execution...")
 
+def find_closest_match(transcription, phrases):
+    matches = get_close_matches(transcription, phrases, n=1, cutoff=0.8)
+    return matches[0] if matches else None
+
 def main():
     duration = 5  # seconds
     output_folder = get_absolute_path("MyVoice")
@@ -1077,14 +1081,11 @@ def main():
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(jarvis_folder, exist_ok=True)
     
-    #whisper_model = whisper.load_model("base")
     gemini_model = genai.GenerativeModel("gemini-1.5-flash-8b")
-    
     greet_user()
 
     custom_responses = {
         "what is my name": get_absolute_path("media/Introductory_speech_of_me.wav"),
-        #"sameer": get_absolute_path("media/KGF_BGMI.wav"),
         "jarvis introduce myself": get_absolute_path("media/Introductory_speech_of_me.wav"),
         "who made you": get_absolute_path("media/Introductory_speech_of_me.wav"),
         "who created you": get_absolute_path("media/Introductory_speech_of_me.wav"),
@@ -1092,225 +1093,119 @@ def main():
         "who is your boss jarvis": get_absolute_path("media/who_is_boss.wav"),
         "jarvis who is your boss jarvis": get_absolute_path("media/who_is_boss.wav"),
         "tell me about myself": get_absolute_path("media/Introductory_speech_of_me.wav"),
-        "tell me something about myself": get_absolute_path("media/Introductory_speech_of_me.wav"),
         "who am i": get_absolute_path("media/Introductory_speech_of_me.wav"),
         "who are you": get_absolute_path("media/Jarvis_Introduction.wav"),
-        "what is your name": get_absolute_path("media/Jarvis_Introduction.wav"),
         "introduce yourself jarvis": get_absolute_path("media/Jarvis_Introduction.wav"),
-        "introduce yourself": get_absolute_path("media/Jarvis_Introduction.wav"),
-        "tell me something about yourself": get_absolute_path("media/Jarvis_Introduction.wav"), 
         "open powerpoint": "open_powerpoint",
-        "open presentation": "open_powerpoint",
-        "presentation": "open_powerpoint",
-        "powerpoint": "open_powerpoint",
-        "shut down":"shutdown_laptop",
-        "jarvis shutdown the system":"shutdown_laptop",
-        "close all functions":"shutdown_laptop",
-        "shutdown the laptop":"shutdown_laptop",
-        "go to sleep":"shutdown_laptop",
-        "check battery status":"check_battery_status",
-        "check power":"check_battery_status",
-        "jarvis write code for me":"run_code_generator_app",
-        "write code for me":"run_code_generator_app",
-        "open code generator":"run_code_generator_app",
-        "start code generator":"run_code_generator_app",
-        "how much power left":"check_battery_status",
-        "go to sleep jarvis":"shutdown_laptop",
-        "sleep jarvis":"shutdown_laptop",
-        "shutdown jarvis":"shutdown_laptop",
-        "send email":"send_email",
-        "jarvis send email":"send_email",
-        "send email to hp":"send_email",
-        "jarvis can you write a mail for me":"send_email",
-        "jarvis can you write a email for me":"send_email",
-        "can you write a email for me":"send_email",
-        "send email to hp@gmail.com":"send_email",
-        "start sending email":"send_email",
-        "sleep":"shutdown_laptop",
-        "jarvis go to sleep":"shutdown_laptop",
-        "go to sleep jarvis":"shutdown_laptop",
-        "jarvis restart my system":"restart_laptop",
-        "restart my system":"restart_laptop",
-        "restart":"restart_laptop",
-        "jarvis restart my system":"restart_laptop",
-        "open wikipedia":"create_gui",
-        "search in wikipedia":"create_gui",
-        "open wikipedia":"create_gui",
-        "search wikipedia":"create_gui",
+        "shut down": "shutdown_laptop",
+        "check battery status": "check_battery_status",
+        "how much power left": "check_battery_status",
+        "jarvis write code for me": "run_code_generator_app",
+        "write code for me": "run_code_generator_app",
+        "open code generator": "run_code_generator_app",
+        "send email": "send_email",
+        "restart my system": "restart_laptop",
+        "restart": "restart_laptop",
+        "jarvis restart my system": "restart_laptop",
+        "open wikipedia": "create_gui",
+        "search wikipedia": "create_gui",
         "what is time now": "tell_time",
         "tell me time": "tell_time",
-        "wait": "pause_jarvis",
-        "wait jarvis": "pause_jarvis",
-        "jarvis wait": "pause_jarvis",
-        "i said wait jarvis": "pause_jarvis",
-        "open pdf": "read_pdf_and_play_audio",
-        "open location": "get_location_info",
+        "open chrome": "open_chrome",
         "check location": "get_location_info",
         "check weather": "get_weather",
-        "open weather app": "get_weather",
-        "open weather": "get_weather",
-        "open temperature": "get_weather",
         "hotness of surrounding": "get_weather",
-        "jarvis how is the weather now": "get_weather",
-        "location": "get_location_info",
         "read pdf": "read_pdf_and_play_audio",
         "scan pdf": "read_pdf_and_play_audio",
-        "jarvis scan pdf": "read_pdf_and_play_audio",
-        "jarvis scan pdf for me": "read_pdf_and_play_audio",
-        "can you scan pdf for me": "read_pdf_and_play_audio",
-        "present time": "tell_time",
-        "open chrome": "open_chrome",
-        "open github": "open_github",
-        "check my schedule":"get_events",
-        "what is there in my schedule":"get_events",
-        "what my schedule":"get_events",
-        "what is my schedule today":"get_events",
-        "jarvis what is my schedule today":"get_events",
-        "jarvis what is my schedule":"get_events",
-        "what is my schedule":"get_events",
-        "jarvis am i free":"get_events",
-        "add event":"add_event",
-        "jarvis add event":"add_event",
-        "jarvis add event in my schedule":"add_event",
-        "add event in my schedule":"add_event",
-        "github": "open_github",
-        "whatsapp": "open_whatsapp",
-        "open whatsapp": "open_whatsapp",
-        "open command": "open_cmd",
-        "open my social media": "open_instagram",
-        "open my instagram": "open_instagram",
         "open instagram": "open_instagram",
-        "instagram": "open_instagram",
-        "open linked in": "open_linkedin",
-        "open my college website": "open_cmrtc",
+        "open my social media": "open_instagram",
+        "open linkedin": "open_linkedin",
         "college website": "open_cmrtc",
         "open my mail": "open_gmail",
-        "open email": "open_gmail",
         "jarvis read my emails": "read_recent_emails",
-        "jarvis read my mails": "read_recent_emails",
-        "jarvis scan the gmail inbox": "read_recent_emails",
-        "jarvis check mails": "read_recent_emails",
-        "jarvis check for new messages": "read_recent_emails",
         "check for new messages": "read_recent_emails",
-        "jarvis give me trending news":"fetch_and_play_news",
-        "jarvis what is the news":"fetch_and_play_news",
-        "jarvis what is the news today":"fetch_and_play_news",
-        "what is the news today":"fetch_and_play_news",
-        "jarvis give me news headlines":"fetch_and_play_news",
-        "give me news headlines":"fetch_and_play_news",
-        "jarvis give me trending news":"fetch_and_play_news",
-        "jarvis check internet speed":"check_internet_speed",
-        "jarvis check internet":"check_internet_speed",
-        "what is my internet speed":"check_internet_speed",
-        "internet speed":"check_internet_speed",
-        "jarvis check internet connection":"check_internet_speed",
-        "internet connection":"check_internet_speed",
-        "jarvis check internet connection":"check_internet_speed",
+        "jarvis give me trending news": "fetch_and_play_news",
+        "give me news headlines": "fetch_and_play_news",
+        "internet speed": "check_internet_speed",
+        "jarvis check internet connection": "check_internet_speed",
     }
 
     stop_phrases = [
-        "jarvis stop", "stop it jarvis", "shutup jarvis","enough jarvis", "stop yourself jarvis",
-        "stop", "good bye jarvis", "stop it", "exit yourself", "stop yourself jarvis", "exit from command line", "don't anger me"
-    ]   
-    
+        "jarvis stop", "stop it jarvis", "shutup jarvis", "enough jarvis",
+        "stop", "good bye jarvis", "exit yourself", "stop yourself jarvis"
+    ]
+
+    # Function mapping for dynamic command execution
+    command_map = {
+        "open_powerpoint": open_powerpoint,
+        "shutdown_laptop": shutdown_laptop,
+        "check_battery_status": check_battery_status,
+        "run_code_generator_app": run_code_generator_app,
+        "send_email": send_email,
+        "restart_laptop": restart_laptop,
+        "create_gui": create_gui,
+        "tell_time": tell_time,
+        "open_chrome": open_chrome,
+        "get_location_info": get_location_info,
+        "get_weather": get_weather,
+        "read_pdf_and_play_audio": read_pdf_and_play_audio,
+        "open_instagram": open_instagram,
+        "open_linkedin": open_linkedin,
+        "open_cmrtc": open_cmrtc,
+        "open_gmail": open_gmail,
+        "read_recent_emails": read_recent_emails,
+        "fetch_and_play_news": fetch_and_play_news,
+        "check_internet_speed": check_internet_speed,
+    }
+
     while True:
         audio = record_audio(duration)
-        
+
         temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
         temp_wav_filename = temp_wav_file.name
         temp_wav_file.close()
-        
+
         save_audio_to_wav(np.array(audio, dtype=np.int16), 16000, temp_wav_filename)
-        
-        result = whisper_model.transcribe(temp_wav_filename,language="en")
+
+        # Transcribe audio
+        result = whisper_model.transcribe(temp_wav_filename, language="en")
         transcription = result.get("text", "No text found")
-        
+
         print("Sameer Boss:", transcription)
-        
+
+        # Check for stop phrases
         if any(phrase in transcription.lower() for phrase in stop_phrases):
             say_goodbye()
             print("Stopping...")
             os.remove(temp_wav_filename)
             break
-        
-        matched_response = None
-        for phrase, action in custom_responses.items():
-            if phrase in transcription.lower():
-                matched_response = action
-                break
-        
+
+        # Match response with fuzzy matching
+        matched_response = find_closest_match(transcription.lower(), custom_responses.keys())
+
         if matched_response:
-            if matched_response == "open_powerpoint":
-                open_powerpoint()
-            elif matched_response == "open_chrome":
-                open_chrome()
-            elif matched_response == "open_cmd":
-                open_cmd()
-            elif matched_response == "open_linkedin":
-                open_linkedin()
-            elif matched_response == "open_cmrtc":
-                open_cmrtc()
-            elif matched_response == "open_instagram":
-                open_instagram()
-            elif matched_response == "open_gmail":
-                open_gmail()
-            elif matched_response == "open_whatsapp":
-                open_whatsapp()
-            elif matched_response == "open_github":
-                open_github()
-            elif matched_response == "tell_time":
-                tell_time()
-            elif matched_response == "read_pdf_and_play_audio":
-                read_pdf_and_play_audio()
-            elif matched_response == "shutdown_laptop":
-                shutdown_laptop()
-            elif matched_response == "restart_laptop":
-                restart_laptop()
-            elif matched_response == "check_battery_status":
-                check_battery_status()
-            elif matched_response == "get_location_info":
-                get_location_info()
-            elif matched_response == "get_weather":
-                get_weather()
-            elif matched_response == "run_code_generator_app":
-                run_code_generator_app()
-            elif matched_response == "add_event":
-                add_event()
-            elif matched_response == "get_events":
-                get_events()
-            elif matched_response == "send_email":
-                send_email()
-            elif matched_response == "pause_jarvis":
-                pause_jarvis()
-            elif matched_response == "read_recent_emails":
-                read_recent_emails()
-            elif matched_response == "create_gui":
-                create_gui()
-            elif matched_response == "fetch_and_play_news":
-                fetch_and_play_news()
-            elif matched_response == "check_internet_speed":
-                check_internet_speed()
-            else:
-                if os.path.isfile(matched_response):
-                        output_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav').name
-                        if "Introductory_speech_of_me" in matched_response:
-                            play_background_with_intro(matched_response, get_absolute_path("media/KGF_BGMI.wav"), background_volume=0.5)
-                        else:
-                            play_background_with_intro(matched_response, get_absolute_path("media/Tiger_back.wav"), background_volume=0.3)
+            action = custom_responses[matched_response]
+            if action in command_map:
+                command_map[action]()  # Execute the corresponding function
+            elif os.path.isfile(action):
+                if "Introductory_speech_of_me" in action:
+                    play_background_with_intro(action, get_absolute_path("media/KGF_BGMI.wav"), background_volume=0.5)
                 else:
-                    print(f"File not found: {matched_response}")
+                    play_background_with_intro(action, get_absolute_path("media/Tiger_back.wav"), background_volume=0.3)
+            else:
+                print(f"Unknown action or missing file: {action}")
         else:
+            # Fallback to Gemini response
             saved_gemini_response = get_gemini_response(gemini_model, transcription)
             processed_response = process_response_text(saved_gemini_response)
             truncated_response = truncate_response(processed_response)
-            timestamp=time.strftime("%Y%m%d_%H%M%S")
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
             response_file = os.path.join(jarvis_folder, f"jarvis_response_{timestamp}.wav")
-            text_to_speech(truncated_response,response_file)
-            
+            text_to_speech(truncated_response, response_file)
+
             print("Jarvis:", processed_response)
-            
             play_audio(response_file)
-        
+
         os.remove(temp_wav_filename)
 
 if __name__ == "__main__":
