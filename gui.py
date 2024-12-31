@@ -4,16 +4,6 @@ import sys
 import os
 import time
 
-def print_slow(text, delay=0.1):
-    output = ''
-    for char in text:
-        output += char
-        sys.stdout.write(char)
-        sys.stdout.flush()
-        time.sleep(delay)
-    sys.stdout.write('\n')
-    return output  # Return the accumulated string
-
 
 # Add the 'features' directory to the system path
 sys.path.append(r'features')
@@ -128,23 +118,14 @@ class Ui_MainWindow(object):
         self.process.terminate()
 
     def dataReady(self):
+    # Read the incoming data
         output = self.process.readAll().data().decode()
-        print("Output received:", repr(output))  # Log the raw output
 
+    # Append the output directly to the GUI
         if output:
-            if len(output) == 1:  # Single character received
-                self.buffer += output  # Accumulate character
-                print("Accumulated buffer:", repr(self.buffer))  # Log buffer state
-                if ' ' in self.buffer or '\n' in self.buffer:  # Finalize word on space/newline
-                    self.textBrowser_3.append(self.buffer.strip())  # Append word to GUI
-                    print("Appended word:", repr(self.buffer.strip()))  # Log appended word
-                    self.buffer = ''  # Clear buffer after appending
-            else:
-                # Handle cases where the output is a full word/sentence
-                self.textBrowser_3.append(output.strip())
-                print("Directly appended:", repr(output.strip()))  # Log direct output
-        else:
-            print("No output received.")  # Log when no output is received
+            self.textBrowser_3.moveCursor(QtGui.QTextCursor.End)  # Ensure cursor moves to the end
+            self.textBrowser_3.insertPlainText(output)  # Append text as it arrives
+
 
 
 if __name__ == "__main__":

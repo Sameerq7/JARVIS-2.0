@@ -29,7 +29,7 @@ def print_slow_and_speak(message, delay=0.1):
     # Function to print text slowly (printing the entire message at once)
     def print_slow(text, delay):
         #time.sleep(delay)  # Delay before printing the message
-        print(text)  # Print the entire message normally
+        print(text,flush=True)  # Print the entire message normally
 
     # Start the speech playback in a separate thread
     speech_thread = threading.Thread(target=speak_and_play, args=(message,))
