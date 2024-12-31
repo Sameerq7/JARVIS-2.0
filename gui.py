@@ -1,5 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QProcess
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtMultimediaWidgets import QVideoWidget
+from PyQt5.QtCore import QUrl
 import sys
 import os
 import time
@@ -81,6 +84,12 @@ class Ui_MainWindow(object):
         self.textBrowser_3.setStyleSheet("font: 11pt \"MS Shell Dlg 2\";\n"
                                          "background-color:white; color:black;")
         self.textBrowser_3.setObjectName("textBrowser_3")
+
+        # Set up the QMediaPlayer for background music
+        self.mediaPlayer = QMediaPlayer()
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(r"C:\Users\hp\Desktop\JARVIS2.0\media\KGF_BGMI.wav")))
+        self.mediaPlayer.setVolume(50)  # Set the volume (0-100)
+        self.mediaPlayer.play()  # Start playing
 
         # Create a QProcess to manage the myAI.py script
         self.process = QProcess()
