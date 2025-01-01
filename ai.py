@@ -53,6 +53,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'features'))
 
 warnings.filterwarnings("ignore", category=FutureWarning, module='whisper')
 warnings.filterwarnings("ignore", category=UserWarning, module='whisper')
+pause_flag = False
 
 def get_absolute_path(relative_path):
     return os.path.join(os.path.dirname(__file__), relative_path)

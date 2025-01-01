@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JARVIS-2.0</title>
     <link rel="icon" href="static/images/JARVIS_LOGO_1.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <style>
         /* Global Reset */
@@ -25,8 +26,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            justify-content: flex-start;
+            min-height: 100vh;
             position: relative;
         }
 
@@ -35,48 +36,119 @@
             font-size: 3rem;
             color: #00aaff;
             text-shadow: 0 0 15px rgba(0, 170, 255, 0.8), 0 0 30px rgba(0, 170, 255, 0.6);
-            margin-bottom: 20px;
+            margin-top: 100px;
             animation: fadeIn 2s ease-out;
         }
 
-        /* Random Statement */
-        .random-statement {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin: 10px;
-            animation: fadeIn 3s ease-out;
+        /* Info Container - Fixed at the top */
+        .info-container {
+            display: flex;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            gap: 20px;
+            margin-top: 20px;
+            z-index: 9999;
+            font-size: 1rem; /* Reduced size for these elements */
         }
 
-        /* Animated Button */
-        .button {
-            padding: 15px 25px;
-            font-size: 20px;
-            margin: 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        .info-item {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .run {
-            background-color: rgb(0, 170, 255);
+        .info-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+
+        .info-item i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #f1c40f;
+        }
+
+        #time-container i {
+            color: #3498db;
+        }
+
+        #date-container i {
+            color: #e74c3c;
+        }
+
+        #location-container i {
+            color: #2ecc71;
+        }
+
+        #weather-container i {
+            color: #f39c12;
+        }
+
+        #time,
+        #date,
+        #location,
+        #weather {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* Random Statement Display */
+        #random-statement {
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+            margin-top: 170px; /* Push the statement below the fixed elements */
+            text-align: center;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .button {
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
             color: white;
-            box-shadow: 0 0 15px rgba(0, 170, 255, 0.7);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        .run {
+            background: #00aaff; /* Neon Blue */
+        }
+
+        .run:hover {
+            box-shadow: 0 0 25px rgba(0, 170, 255, 0.8);
         }
 
         .stop {
-            background-color: rgb(255, 0, 0);
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+            background: #e74c3c; /* Shiny Red */
         }
 
-        .run:hover,
         .stop:hover {
-            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.9);
         }
 
-        .run:active,
-        .stop:active {
+        .button:active {
             transform: scale(0.95);
         }
 
@@ -86,20 +158,14 @@
             margin: 30px auto;
             padding: 20px;
             width: 80%;
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
             font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
             animation: fadeInLogs 2s ease-out;
         }
 
-        .output p {
-            margin-bottom: 15px;
-            text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
-        }
-
-        /* Footer Section */
         footer {
             position: absolute;
             bottom: 10px;
@@ -107,14 +173,12 @@
             text-align: center;
             color: #fff;
             font-size: 1rem;
-            animation: fadeInFooter 2s ease-out;
         }
 
         footer a {
             color: #00aaff;
             text-decoration: none;
             font-weight: bold;
-            transition: color 0.3s;
         }
 
         footer a:hover {
@@ -146,36 +210,28 @@
             }
         }
 
-        @keyframes fadeInFooter {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Header and Footer GIF */
-        .header-gif,
-        .footer-gif {
-            width: 300px;
-            height: auto;
-            margin: 20px auto;
-            animation: fadeIn 3s ease-out;
-        }
-
         /* Responsive Design */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
+            .info-container {
+                flex-direction: column;
+                align-items: center;
+                position: static;
+                transform: none;
+                gap: 10px;
+            }
+
+            .info-item {
+                width: 200px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 15px;
             }
 
             .button {
                 font-size: 16px;
-                padding: 12px 20px;
+                padding: 10px 18px;
             }
 
             .output {
@@ -188,13 +244,33 @@
 
 <body>
     <div class="container">
-        <h1>JARVIS-2.0</h1>
+        <!-- Info Container -->
+        <div class="info-container">
+            <div class="info-item" id="time-container">
+                <i class="fa fa-clock" aria-hidden="true"></i>
+                <div id="time">Time</div>
+            </div>
+            <div class="info-item" id="date-container">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+                <div id="date">Date</div>
+            </div>
+            <div class="info-item" id="location-container">
+                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                <div id="location">Location</div>
+            </div>
+            <div class="info-item" id="weather-container">
+                <i class="fa fa-sun-o" aria-hidden="true"></i>
+                <div id="weather">Weather</div>
+            </div>
+        </div>
 
         <!-- Random Statement Display -->
-        <div id="random-statement"
-            style="font-size: 1.5rem; color: #fff; text-shadow: 0 0 5px rgba(0, 170, 255, 0.5); margin-bottom: 30px;">
+        <div id="random-statement">
             Loading Jarvis statement...
         </div>
+
+        <!-- Heading -->
+        <h1>JARVIS-2.0</h1>
 
         <!-- Buttons -->
         <div class="button-container">
@@ -204,6 +280,7 @@
 
         <!-- Output Logs -->
         <div class="output" id="output"></div>
+
     </div>
 
     <!-- Footer -->
@@ -215,6 +292,56 @@
     <script>
         const outputDiv = document.getElementById('output');
         let eventSource;
+        const timeDiv = document.getElementById('time');
+        const dateDiv = document.getElementById('date');
+        const locationDiv = document.getElementById('location');
+        const weatherDiv = document.getElementById('weather');
+
+        // OpenWeather API Key (Replace with your API key)
+        const apiKey = '4a55ed1973c7bd7587d913b9a3656921';
+        const weatherApiUrl = 'https://api.openweathermap.org/data/2.5/weather?appid=' + apiKey;
+
+        // Function to get the current time and date
+        function updateTimeAndDate() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            const date = now.toLocaleDateString();
+
+            timeDiv.textContent = time;
+            dateDiv.textContent = date;
+        }
+
+        // Function to get the location and weather
+        function updateLocationAndWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Get location info
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const city = data.name;
+                            const region = data.sys.country;
+                            locationDiv.textContent = `${city}, ${region}`;
+
+                            const weatherDescription = data.weather[0].description;
+                            const temperature = (data.main.temp - 273.15).toFixed(1);
+                            weatherDiv.textContent = `${temperature}°C, ${weatherDescription}`;
+                        });
+                });
+            } else {
+                locationDiv.textContent = "Location access denied";
+                weatherDiv.textContent = "Weather data unavailable";
+            }
+        }
+
+        // Update time and date every second
+        setInterval(updateTimeAndDate, 1000);
+
+        // Fetch location and weather once
+        updateLocationAndWeather();
 
         // List of random statements
         const statements = [
@@ -272,19 +399,19 @@
             if (eventSource) eventSource.close();
             eventSource = new EventSource("/logs");
             eventSource.onmessage = function (event) {
-                outputDiv.innerHTML += `<p>${event.data}</p>`;
+                outputDiv.innerHTML += event.data + "<br>";
                 outputDiv.scrollTop = outputDiv.scrollHeight;
             };
         }
 
         function stopLogStream() {
-            if (eventSource) {
-                eventSource.close();
-                eventSource = null;
-            }
+            if (eventSource) eventSource.close();
         }
 
-        randomStatement();  // Show an initial statement
+        function simulateEnter() {
+            outputDiv.innerHTML += "Simulating Enter press...\n";
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+        }
     </script>
 </body>
 

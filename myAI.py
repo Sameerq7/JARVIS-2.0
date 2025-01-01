@@ -10,6 +10,7 @@ from threading import Thread
 import smtplib
 import simpleaudio as sa
 import sys
+from multiprocessing import Value
 sys.stdout.reconfigure(line_buffering=True)
 from threading import Thread, Event
 from features.checkInternet import *
@@ -65,7 +66,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar']
 # Set your API key
 load_dotenv()
 api_key = os.getenv("API_KEY")  # Ensure your .env file has this variable
-
+resume_flag = Value('b', False)
 genai.configure(api_key=api_key)
 whisper_model = whisper.load_model("small")
 
@@ -848,18 +849,15 @@ def update_event():
     speak_and_play(message)
 
 def pause_jarvis():
+    global resume_flag
     speak_and_play("Boss...! Waiting for your next commands.")
-    # video_path = 'C:/Users/hp/Desktop/JARVIS2.0/media/Jarvis_intro_video.mp4'
-    # video_thread = Thread(target=play_video, args=(video_path,))
-    # video_thread.start()
-
+    
     while True:
-        user_input = input("Boss...!Press Enter to continue. ")
-        if user_input == '':
+        if resume_flag.value:  # Access the shared flag
             speak_and_play("Boss...! Resuming your commands")
+            resume_flag.value = False  # Reset the flag
             break
-
-    # video_thread.join()
+        time.sleep(1)  # Wait for the signal
 
 def delete_event_by_title():
     service = authenticate_google_calendar()
