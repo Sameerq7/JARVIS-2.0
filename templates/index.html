@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jarvis Web Interface</title>
+    <title>JARVIS-2.0</title>
     <link rel="icon" href="static/images/JARVIS_LOGO_1.png" type="image/png">
 
     <style>
@@ -34,8 +35,16 @@
             font-size: 3rem;
             color: #00aaff;
             text-shadow: 0 0 15px rgba(0, 170, 255, 0.8), 0 0 30px rgba(0, 170, 255, 0.6);
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             animation: fadeIn 2s ease-out;
+        }
+
+        /* Random Statement */
+        .random-statement {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 10px;
+            animation: fadeIn 3s ease-out;
         }
 
         /* Animated Button */
@@ -61,11 +70,13 @@
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
         }
 
-        .run:hover, .stop:hover {
+        .run:hover,
+        .stop:hover {
             transform: scale(1.1);
         }
 
-        .run:active, .stop:active {
+        .run:active,
+        .stop:active {
             transform: scale(0.95);
         }
 
@@ -116,6 +127,7 @@
                 opacity: 0;
                 transform: translateY(-50px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -127,6 +139,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -138,6 +151,7 @@
                 opacity: 0;
                 transform: translateY(50px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -145,7 +159,8 @@
         }
 
         /* Header and Footer GIF */
-        .header-gif, .footer-gif {
+        .header-gif,
+        .footer-gif {
             width: 300px;
             height: auto;
             margin: 20px auto;
@@ -168,31 +183,72 @@
                 height: 350px;
             }
         }
-
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>Jarvis Web Interface</h1>
+        <h1>JARVIS-2.0</h1>
 
-        
+        <!-- Random Statement Display -->
+        <div id="random-statement"
+            style="font-size: 1.5rem; color: #fff; text-shadow: 0 0 5px rgba(0, 170, 255, 0.5); margin-bottom: 30px;">
+            Loading Jarvis statement...
+        </div>
+
         <!-- Buttons -->
-        <button class="button run" onclick="startJarvis()">Run</button>
-        <button class="button stop" onclick="stopJarvis()">Exit</button>
+        <div class="button-container">
+            <button class="button run" onclick="startJarvis()">Run Jarvis</button>
+            <button class="button stop" onclick="stopJarvis()">Stop Jarvis</button>
+        </div>
 
         <!-- Output Logs -->
         <div class="output" id="output"></div>
     </div>
 
-   
-
+    <!-- Footer -->
     <footer>
-        <p>Made with ❤️ by Sameer. <a href="https://github.com/Sameerq7/JARVIS-2.0" target="_blank">View on GitHub</a></p>
+        <p>Made with ❤️ by Sameer. <a href="https://github.com/Sameerq7/JARVIS-2.0" target="_blank">View on GitHub</a>
+        </p>
     </footer>
 
     <script>
         const outputDiv = document.getElementById('output');
         let eventSource;
+
+        // List of random statements
+        const statements = [
+            "Welcome to Jarvis, your personal assistant.",
+            "Jarvis is powered by artificial intelligence.",
+            "Created with ❤️ by Sameer, an aspiring developer.",
+            "Jarvis learns and evolves with time.",
+            "Your requests are my command!",
+            "Jarvis will assist you in managing your tasks effortlessly.",
+            "Jarvis is ready to serve you!",
+            "Every task is an opportunity for Jarvis to shine.",
+            "Jarvis, your personal assistant, always at your service.",
+            "You are just a command away from Jarvis's help.",
+            "With Jarvis, your productivity reaches new heights.",
+            "Feel free to ask Jarvis anything. I'm always here.",
+            "Jarvis will handle it for you.",
+            "Your personal AI assistant, powered by Jarvis.",
+            "Jarvis is more than just a voice—it's a revolution.",
+            "Everything is possible with Jarvis on your side.",
+            "Jarvis: A blend of intelligence and innovation.",
+            "Jarvis adapts to your needs with every interaction.",
+            "Your digital companion is ready to assist—just ask.",
+            "Jarvis is the future of personal assistance.",
+            "With Jarvis, managing tasks has never been easier."
+        ];
+
+        // Function to show a random statement
+        function randomStatement() {
+            const randomIndex = Math.floor(Math.random() * statements.length);
+            document.getElementById('random-statement').textContent = statements[randomIndex];
+        }
+
+        // Update statement every 4 seconds
+        setInterval(randomStatement, 4000);
 
         function startJarvis() {
             fetch("/start", { method: "POST" })
@@ -215,7 +271,7 @@
         function startLogStream() {
             if (eventSource) eventSource.close();
             eventSource = new EventSource("/logs");
-            eventSource.onmessage = function(event) {
+            eventSource.onmessage = function (event) {
                 outputDiv.innerHTML += `<p>${event.data}</p>`;
                 outputDiv.scrollTop = outputDiv.scrollHeight;
             };
@@ -227,6 +283,9 @@
                 eventSource = null;
             }
         }
+
+        randomStatement();  // Show an initial statement
     </script>
 </body>
+
 </html>
