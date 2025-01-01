@@ -213,12 +213,12 @@ def open_cmd():
         print_slow_and_speak("Command Prompt could not be opened. Please check the path.")
 
 def open_linkedin():
-    linkedin_url = "https://www.linkedin.com/in/shaik-sameer-hussain-b88323250/"
+    linkedin_url = "https://www.linkedin.com/in/mohd-sohail-7bb81b278//"
     print_slow_and_speak("OK Boss....Opening Your LinkedIn Profile")
     webbrowser.open(linkedin_url)
 
 def open_instagram():
-    instagram_url = "https://www.instagram.com/h_shaiksameer?igsh=MXZhZDRoY2NsMHU5bw%3D%3D"
+    instagram_url = "https://www.instagram.com/1b_sohailahmed/"
     print_slow_and_speak("OK Boss....Opening Your Instagram Account")
     webbrowser.open(instagram_url)
 
@@ -1225,7 +1225,7 @@ def main():
         result = whisper_model.transcribe(temp_wav_filename,language="en")
         transcription = result.get("text", "No text found")
         
-        print("Sameer Boss:", transcription)
+        print("Sohail Boss:", transcription)
         
         if any(phrase in transcription.lower() for phrase in stop_phrases):
             say_goodbye()
