@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Web Interface</title>
+    <link rel="icon" href="static/images/JARVIS_LOGO_1.png" type="image/png">
+
+    <style>
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Style */
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            background: url('static/images/live_wallpaper.gif') no-repeat center center fixed;
+            background-size: cover;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Header */
+        h1 {
+            font-size: 3rem;
+            color: #00aaff;
+            text-shadow: 0 0 15px rgba(0, 170, 255, 0.8), 0 0 30px rgba(0, 170, 255, 0.6);
+            margin-bottom: 40px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        /* Animated Button */
+        .button {
+            padding: 15px 25px;
+            font-size: 20px;
+            margin: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .run {
+            background-color: rgb(0, 170, 255);
+            color: white;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.7);
+        }
+
+        .stop {
+            background-color: rgb(255, 0, 0);
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+        }
+
+        .run:hover, .stop:hover {
+            transform: scale(1.1);
+        }
+
+        .run:active, .stop:active {
+            transform: scale(0.95);
+        }
+
+        /* Output Logs */
+        .output {
+            background-color: rgba(0, 0, 0, 0.7);
+            margin: 30px auto;
+            padding: 20px;
+            width: 80%;
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            font-size: 1.2rem;
+            animation: fadeInLogs 2s ease-out;
+        }
+
+        .output p {
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+        }
+
+        /* Footer Section */
+        footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 1rem;
+            animation: fadeInFooter 2s ease-out;
+        }
+
+        footer a {
+            color: #00aaff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #ffcc00;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLogs {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInFooter {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header and Footer GIF */
+        .header-gif, .footer-gif {
+            width: 300px;
+            height: auto;
+            margin: 20px auto;
+            animation: fadeIn 3s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .button {
+                font-size: 16px;
+                padding: 12px 20px;
+            }
+
+            .output {
+                width: 90%;
+                height: 350px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jarvis Web Interface</h1>
+
+        
+        <!-- Buttons -->
+        <button class="button run" onclick="startJarvis()">Run</button>
+        <button class="button stop" onclick="stopJarvis()">Exit</button>
+
+        <!-- Output Logs -->
+        <div class="output" id="output"></div>
+    </div>
+
+   
+
+    <footer>
+        <p>Made with ❤️ by Sameer. <a href="https://github.com/Sameerq7/JARVIS-2.0" target="_blank">View on GitHub</a></p>
+    </footer>
+
+    <script>
+        const outputDiv = document.getElementById('output');
+        let eventSource;
+
+        function startJarvis() {
+            fetch("/start", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.status);
+                    startLogStream();
+                });
+        }
+
+        function stopJarvis() {
+            fetch("/stop", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.status);
+                    stopLogStream();
+                });
+        }
+
+        function startLogStream() {
+            if (eventSource) eventSource.close();
+            eventSource = new EventSource("/logs");
+            eventSource.onmessage = function(event) {
+                outputDiv.innerHTML += `<p>${event.data}</p>`;
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            };
+        }
+
+        function stopLogStream() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+        }
+    </script>
+</body>
+</html>

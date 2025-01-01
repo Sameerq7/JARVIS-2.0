@@ -9,6 +9,8 @@ from google.api_core.exceptions import InternalServerError
 from threading import Thread
 import smtplib
 import simpleaudio as sa
+import sys
+sys.stdout.reconfigure(line_buffering=True)
 from threading import Thread, Event
 from features.checkInternet import *
 import threading
