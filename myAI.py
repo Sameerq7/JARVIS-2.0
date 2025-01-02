@@ -1225,7 +1225,7 @@ def main():
         result = whisper_model.transcribe(temp_wav_filename,language="en")
         transcription = result.get("text", "No text found")
         
-        print("Sohail Boss:", transcription)
+        print("Sameer Boss:", transcription)
         
         if any(phrase in transcription.lower() for phrase in stop_phrases):
             say_goodbye()
