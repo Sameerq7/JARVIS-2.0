@@ -11,6 +11,7 @@ import smtplib
 import simpleaudio as sa
 import sys
 import pyautogui
+from docx import Document
 import json
 from fuzzywuzzy import process
 from google.cloud import speech
@@ -259,6 +260,27 @@ def match_contact(contact_name, contacts):
         return best_match[0]  # return the contact name with the highest match score
     return None
 
+def get_phone_number_from_user():
+    speak_and_play("I couldn't find the contact. Please say the phone number you want to send a message to.")
+    while True:
+        audio = record_audio(duration=5)
+        temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+        temp_wav_filename = temp_wav_file.name
+        temp_wav_file.close()
+        save_audio_to_wav(audio, 16000, temp_wav_filename)
+
+        # Use SpeechRecognition or Google Cloud Speech-to-Text for transcription
+        phone_number = transcribe_audio_using_sr(temp_wav_filename)  # Or use transcribe_audio_using_google
+        print(f"Phone Number: {phone_number}")
+
+        cleaned_phone_number = phone_number.replace(" ", "")  # Removing spaces
+
+        # Validate the phone number format (basic validation)
+        if cleaned_phone_number and cleaned_phone_number.isdigit() and len(cleaned_phone_number) >= 10:
+            return cleaned_phone_number
+        else:
+            speak_and_play("Sorry, I didn't understand the number. Please say it again.")
+
 def whatsapp_messaging():
     contacts = load_contacts()
 
@@ -266,7 +288,10 @@ def whatsapp_messaging():
         return
 
     speak_and_play("Boss, to whom should I message on behalf of you?")
-    while True:
+    attempts = 0
+    matched_contact = None
+
+    while attempts < 3:
         audio = record_audio(duration=5)
         temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
         temp_wav_filename = temp_wav_file.name
@@ -278,6 +303,13 @@ def whatsapp_messaging():
 
         print(f"Transcription: {transcription}")
 
+        # Check if the transcription contains 'phone number'
+        if "phone number" in transcription.lower():
+            # Trigger phone number input if the user mentions 'phone number'
+            phone_number = get_phone_number_from_user()
+            break
+
+        # Check if the transcription matches any contact
         contact_name = transcription.capitalize()
         matched_contact = match_contact(contact_name, contacts)
 
@@ -287,29 +319,33 @@ def whatsapp_messaging():
             break
         else:
             speak_and_play(f"Contact '{contact_name}' not found. Please try again.")
+            attempts += 1
 
-    speak_and_play(f"Boss, what message do you want to send to {matched_contact}?")
-    while True:
-        audio = record_audio(duration=5)
-        temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
-        temp_wav_filename = temp_wav_file.name
-        temp_wav_file.close()
-        save_audio_to_wav(audio, 16000, temp_wav_filename)
+    if matched_contact or phone_number:
+        speak_and_play(f"Boss, what message do you want to send?")
+        while True:
+            audio = record_audio(duration=5)
+            temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+            temp_wav_filename = temp_wav_file.name
+            temp_wav_file.close()
+            save_audio_to_wav(audio, 16000, temp_wav_filename)
 
-        # Use SpeechRecognition or Google Cloud Speech-to-Text for transcription
-        message = transcribe_audio_using_sr(temp_wav_filename)  # Or use transcribe_audio_using_google
+            # Use SpeechRecognition or Google Cloud Speech-to-Text for transcription
+            message = transcribe_audio_using_sr(temp_wav_filename)  # Or use transcribe_audio_using_google
 
-        print(f"Message: {message}")
+            print(f"Message: {message}")
 
-        speak_and_play(f"Sending message to {matched_contact}: {message}")
-        url = f'https://web.whatsapp.com/send?phone={phone_number}&text={message}'
-        webbrowser.open(url)
+            speak_and_play(f"Sending message: {message}")
+            url = f'https://web.whatsapp.com/send?phone={phone_number}&text={message}'
+            webbrowser.open(url)
 
-        # Allow time for WhatsApp Web to load and send the message
-        time.sleep(10)
-        pyautogui.press('enter')
-        speak_and_play("Message sent successfully.")
-        break
+            # Allow time for WhatsApp Web to load and send the message
+            time.sleep(10)
+            pyautogui.press('enter')
+            speak_and_play("Message sent successfully.")
+            break
+    else:
+        speak_and_play("Sorry, I couldn't understand the contact name or phone number.")
 
 def open_whatsapp():
     print_slow_and_speak("OK Boss....Opening Your Whatsapp")
@@ -354,6 +390,8 @@ def save_audio_to_wav(audio, samplerate, filename):
         wf.setsampwidth(2)  # 16-bit
         wf.setframerate(samplerate)
         wf.writeframes(audio.tobytes())
+
+
 
 def record_audio(duration, samplerate=16000):
     print("Listening to You Boss...")
@@ -443,7 +481,96 @@ def process_response_text(text):
     text = re.sub(r'[^\x00-\x7F]+', '', text)
     return text
 
+def process_gemini_content(content):
+    """
+    Process the raw content received from Gemini model.
+    This function will clean up the redundant lines and apply formatting.
+    """
+    processed_content = []
+    lines = content.split('\n')
+    
+    # Process each line to remove redundant content and apply correct formatting
+    for line in lines:
+        # Remove redundant lines with the format "• This is the content for ..."
+        if line.startswith("• This is the content for"):
+            continue
 
+        # Remove unnecessary markers like "**" or "##"
+        line = re.sub(r'[\*\#\*\*]', '', line)
+        
+        # Add the cleaned line to processed content
+        if line.strip():  # Ensure it's not empty
+            processed_content.append(line.strip())
+
+    return processed_content
+
+def create_document():
+    speak_and_play("What topic would you like to create a document on?")
+    
+    # Record and transcribe the topic
+    topic = ""
+    attempts = 0
+    while attempts < 3:
+        audio = record_audio(duration=5)
+        temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+        temp_wav_filename = temp_wav_file.name
+        temp_wav_file.close()
+        save_audio_to_wav(audio, 16000, temp_wav_filename)
+
+        topic = transcribe_audio_using_sr(temp_wav_filename)
+        print(f"Topic: {topic}")
+
+        if topic:
+            speak_and_play(f"Creating document on {topic}")
+            break
+        else:
+            attempts += 1
+            speak_and_play("Sorry, I couldn't understand. Please try again.")
+
+    if not topic:
+        speak_and_play("I couldn't understand the topic. Please try again later.")
+        return
+
+    # Generate content using Gemini model
+    model_name = "gemini-1.5-flash-8b"
+    gemini_model = genai.GenerativeModel("gemini-1.5-flash-8b")
+    message = f"Provide a detailed explanation in a document form with sections about {topic}."
+    content = get_gemini_response(gemini_model, message)
+    speak_and_play("Generating document content...")
+    processed_content = process_gemini_content(content)
+    # Create a new document
+    # doc = Document()
+
+    # # Add Title
+    # doc.add_heading(topic, level=1)
+
+    # # Add content sections (assuming Gemini's response provides sections in some structured form)
+    # sections = content.split('\n')  # Assuming Gemini returns sections separated by newlines
+
+    # for section in sections:
+    #     if section:
+    #         doc.add_heading(section, level=2)
+    #         # Adding some dummy paragraphs for the sake of structure
+    #         doc.add_paragraph("This is the content for " + section, style='List Bullet')
+
+    # # Save the document to a file
+    # file_path = f"C:\\Users\\hp\\Desktop\\{topic.replace(' ', '_')}_Document.docx"
+    # doc.save(file_path)
+    doc = Document()
+
+    # Add Title
+    doc.add_heading(topic, level=1)
+
+    # Add processed content sections
+    for section in processed_content:
+        doc.add_paragraph(section, style='Normal')
+
+    # Save the document to a file
+    file_path = f"C:\\Users\\hp\\Desktop\\{topic.replace(' ', '_')}_Document.docx"
+    doc.save(file_path)
+    
+    speak_and_play(f"Document on {topic} created successfully. You can find it at this location")
+    print(f"{file_path}")
 
 def greet_user():
     current_hour = datetime.now().hour
@@ -1321,6 +1448,13 @@ def main():
         "what is my internet speed":"check_internet_speed",
         "internet speed":"check_internet_speed",
         "jarvis check internet connection":"check_internet_speed",
+        "jarvis create a document":"create_document",
+        "create a document":"create_document",
+        "document":"create_document",
+        "i want a document":"create_document",
+        "prepare a document":"create_document",
+        "can you help me in document":"create_document",
+        "document creation":"create_document",
         "internet connection":"check_internet_speed",
         "jarvis check internet connection":"check_internet_speed",
     }
@@ -1331,16 +1465,24 @@ def main():
     ]   
     
     while True:
-        audio = record_audio(duration)
+        # audio = record_audio(duration)
         
+        # temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+        # temp_wav_filename = temp_wav_file.name
+        # temp_wav_file.close()
+        
+        # save_audio_to_wav(np.array(audio, dtype=np.int16), 16000, temp_wav_filename)
+        
+        # result = whisper_model.transcribe(temp_wav_filename,language="en")
+        # transcription = result.get("text", "No text found")
+        audio = record_audio(duration=5)
         temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
         temp_wav_filename = temp_wav_file.name
         temp_wav_file.close()
-        
-        save_audio_to_wav(np.array(audio, dtype=np.int16), 16000, temp_wav_filename)
-        
-        result = whisper_model.transcribe(temp_wav_filename,language="en")
-        transcription = result.get("text", "No text found")
+        save_audio_to_wav(audio, 16000, temp_wav_filename)
+
+        # Use SpeechRecognition or Google Cloud Speech-to-Text for transcription
+        transcription = transcribe_audio_using_sr(temp_wav_filename)
         
         print("Sameer Boss:", transcription)
         
@@ -1407,6 +1549,8 @@ def main():
                 fetch_and_play_news()
             elif matched_response == "check_internet_speed":
                 check_internet_speed()
+            elif matched_response == "create_document":
+                create_document()
             else:
                 if os.path.isfile(matched_response):
                         output_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav').name
@@ -1436,6 +1580,7 @@ if __name__ == "__main__":
     # time.sleep(2)
     #fetch_and_play_news()
     main()
+    #create_document()
     #read_recent_emails()
 
     #add_event()
