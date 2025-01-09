@@ -504,6 +504,46 @@ def process_gemini_content(content):
 
     return processed_content
 
+
+from docx.shared import RGBColor, Pt
+from docx import Document
+import re
+import tempfile
+
+def process_gemini_content_2(content):
+    """
+    Process the raw content received from Gemini model.
+    This function will clean up the redundant lines, apply correct formatting,
+    and detect section names for bold formatting.
+    """
+    processed_content = []
+    lines = content.split('\n')
+    
+    for line in lines:
+        # Skip redundant lines like "• This is the content for ..."
+        if line.startswith("• This is the content for"):
+            continue
+        
+        # Remove unnecessary symbols like "**" or "##"
+        line = re.sub(r'[\*\#\*\*]', '', line)
+        
+        # Check if the line is a section name (e.g., "Introduction", "History", etc.)
+        if line.strip() and not line.strip()[0].isdigit():  # If not a numbered section
+            processed_content.append({'section': line.strip(), 'is_section': True})
+        else:
+            processed_content.append({'section': line.strip(), 'is_section': False})
+
+    return processed_content
+
+def set_normal_style(paragraph):
+    """
+    Apply Normal style with Times New Roman font and size 14 to the paragraph.
+    """
+    run = paragraph.add_run(paragraph.text)
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(12)
+    run.font.color.rgb = RGBColor(0, 0, 0)  # Set the text color to black
+
 def create_document():
     speak_and_play("What topic would you like to create a document on?")
     
@@ -534,43 +574,46 @@ def create_document():
     # Generate content using Gemini model
     model_name = "gemini-1.5-flash-8b"
     gemini_model = genai.GenerativeModel("gemini-1.5-flash-8b")
-    message = f"Provide a detailed explanation in a document form with sections about {topic}."
+    message = f"Provide a detailed explanation in a document form with sections about {topic}.(NOTE:THE MATTER SHOULD BE EASILY CONVERTED TO THE DOCUMENT BY JUST PASTING)"
     content = get_gemini_response(gemini_model, message)
     speak_and_play("Generating document content...")
-    processed_content = process_gemini_content(content)
+
+    # Process the content before adding to document
+    processed_content = process_gemini_content_2(content)
+    
     # Create a new document
-    # doc = Document()
-
-    # # Add Title
-    # doc.add_heading(topic, level=1)
-
-    # # Add content sections (assuming Gemini's response provides sections in some structured form)
-    # sections = content.split('\n')  # Assuming Gemini returns sections separated by newlines
-
-    # for section in sections:
-    #     if section:
-    #         doc.add_heading(section, level=2)
-    #         # Adding some dummy paragraphs for the sake of structure
-    #         doc.add_paragraph("This is the content for " + section, style='List Bullet')
-
-    # # Save the document to a file
-    # file_path = f"C:\\Users\\hp\\Desktop\\{topic.replace(' ', '_')}_Document.docx"
-    # doc.save(file_path)
     doc = Document()
 
-    # Add Title
-    doc.add_heading(topic, level=1)
+    # Add Title (Heading 1 - center-aligned, blue, bold)
+    title = doc.add_heading(topic, level=1)
+    title.alignment = 1  # Center the title
+    title_run = title.runs[0]
+    title_run.font.bold = True
+    title_run.font.color.rgb = RGBColor(0, 0, 0)  # Set title color to black
 
     # Add processed content sections
-    for section in processed_content:
-        doc.add_paragraph(section, style='Normal')
+    for item in processed_content:
+        if item['is_section']:
+            # Add section name in bold (Heading 2)
+            section = doc.add_paragraph(item['section'], style='Heading 2')
+            section_run = section.runs[0]
+            section_run.font.bold = True
+            section_run.font.color.rgb = RGBColor(0, 0, 0)  # Set section color to black
+        else:
+            # Add content under the section with Normal style, Times New Roman, 14 font size, black color
+            paragraph = doc.add_paragraph(item['section'])
+            set_normal_style(paragraph)
 
     # Save the document to a file
     file_path = f"C:\\Users\\hp\\Desktop\\{topic.replace(' ', '_')}_Document.docx"
     doc.save(file_path)
     
-    speak_and_play(f"Document on {topic} created successfully. You can find it at this location")
-    print(f"{file_path}")
+    speak_and_play(f"Document on {topic} created successfully. You can find it at this location.")
+    print(f"Document saved at {file_path}")
+
+
+
+
 
 def greet_user():
     current_hour = datetime.now().hour
@@ -1579,8 +1622,8 @@ if __name__ == "__main__":
     # PlayVideo(video_file)
     # time.sleep(2)
     #fetch_and_play_news()
-    main()
-    #create_document()
+   # main()
+    create_document()
     #read_recent_emails()
 
     #add_event()
