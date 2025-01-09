@@ -1307,7 +1307,10 @@ def main():
         "jarvis check for new messages": "read_recent_emails",
         "check for new messages": "read_recent_emails",
         "jarvis give me trending news":"fetch_and_play_news",
+        "jarvis what is going on in the world":"fetch_and_play_news",
+        "what is going on in the world":"fetch_and_play_news",
         "jarvis what is the news":"fetch_and_play_news",
+        "tell me the latest news":"fetch_and_play_news",
         "jarvis what is the news today":"fetch_and_play_news",
         "what is the news today":"fetch_and_play_news",
         "jarvis give me news headlines":"fetch_and_play_news",
@@ -1431,6 +1434,7 @@ if __name__ == "__main__":
     video_file = get_absolute_path("media/Jarvis_intro_video.mp4")
     # PlayVideo(video_file)
     # time.sleep(2)
+    #fetch_and_play_news()
     main()
     #read_recent_emails()
 
