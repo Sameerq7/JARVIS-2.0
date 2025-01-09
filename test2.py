@@ -1,31 +1,119 @@
 import os
+import tempfile
+import webbrowser
+import time
+import pyautogui
+import json
+from fuzzywuzzy import process
+from myAI import record_audio, save_audio_to_wav, speak_and_play  # Import functions from myAI.py
+from google.cloud import speech
+import speech_recognition as sr
 
-# Set the folder path
-folder_path = r"C:\Users\hp\Desktop\JARVIS2.0\media\img\icons"
+def transcribe_audio_using_sr(file_path):
+    # Using SpeechRecognition library (Google Web Speech)
+    recognizer = sr.Recognizer()
+    with sr.AudioFile(file_path) as source:
+        audio_data = recognizer.record(source)
+        try:
+            text = recognizer.recognize_google(audio_data)
+            return text
+        except sr.UnknownValueError:
+            return "Audio could not be understood."
+        except sr.RequestError as e:
+            return f"Error with the service: {e}"
 
-# Initialize counters for images and icons
-image_counter = 1
-icon_counter = 1
+def transcribe_audio_using_google(file_path):
+    # Using Google Cloud Speech-to-Text API
+    client = speech.SpeechClient()
 
-# Supported file extensions for images and icons
-valid_extensions = (".jpg", ".jpeg", ".png", ".gif", ".ico", ".bmp")
+    with open(file_path, "rb") as audio_file:
+        content = audio_file.read()
 
-# Iterate through files in the folder
-for filename in os.listdir(folder_path):
-    file_path = os.path.join(folder_path, filename)
+    audio = speech.RecognitionAudio(content=content)
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+        sample_rate_hertz=16000,
+        language_code="en-US",
+    )
 
-    # Check if it is a valid file
-    if os.path.isfile(file_path) and filename.lower().endswith(valid_extensions):
-        # Determine if it's an image or icon based on extension
-        if filename.lower().endswith(".ico"):
-            new_name = f"JARVIS_ICON_{icon_counter}.ico"
-            icon_counter += 1
+    response = client.recognize(config=config, audio=audio)
+
+    # Returns the first transcription result
+    for result in response.results:
+        return result.alternatives[0].transcript
+    return ""
+
+
+def load_contacts():
+    # Load contacts from the contacts.json file
+    try:
+        with open("contacts.json", "r") as file:
+            contacts = json.load(file)
+            return contacts
+    except FileNotFoundError:
+        speak_and_play("Contacts file not found.")
+        return {}
+    except json.JSONDecodeError:
+        speak_and_play("Error reading the contacts file.")
+        return {}
+
+def match_contact(contact_name, contacts):
+    # Use fuzzywuzzy to match the contact name with available contacts
+    best_match = process.extractOne(contact_name, contacts.keys())
+    if best_match and best_match[1] >= 70:  # 70 is the threshold for matching
+        return best_match[0]  # return the contact name with the highest match score
+    return None
+
+def whatsapp_messaging():
+    contacts = load_contacts()
+
+    if not contacts:
+        return
+
+    speak_and_play("Boss, to whom should I message on behalf of you?")
+    while True:
+        audio = record_audio(duration=5)
+        temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+        temp_wav_filename = temp_wav_file.name
+        temp_wav_file.close()
+        save_audio_to_wav(audio, 16000, temp_wav_filename)
+
+        # Use SpeechRecognition or Google Cloud Speech-to-Text for transcription
+        transcription = transcribe_audio_using_sr(temp_wav_filename)  # Or use transcribe_audio_using_google
+
+        print(f"Transcription: {transcription}")
+
+        contact_name = transcription.capitalize()
+        matched_contact = match_contact(contact_name, contacts)
+
+        if matched_contact:
+            phone_number = contacts[matched_contact]
+            speak_and_play(f"Messaging {matched_contact}.")
+            break
         else:
-            new_name = f"JARVIS_LOGO_{image_counter}.png"
-            image_counter += 1
+            speak_and_play(f"Contact '{contact_name}' not found. Please try again.")
 
-        # Rename the file
-        new_file_path = os.path.join(folder_path, new_name)
-        os.rename(file_path, new_file_path)
+    speak_and_play(f"Boss, what message do you want to send to {matched_contact}?")
+    while True:
+        audio = record_audio(duration=5)
+        temp_wav_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+        temp_wav_filename = temp_wav_file.name
+        temp_wav_file.close()
+        save_audio_to_wav(audio, 16000, temp_wav_filename)
 
-print("Renaming completed.")
+        # Use SpeechRecognition or Google Cloud Speech-to-Text for transcription
+        message = transcribe_audio_using_sr(temp_wav_filename)  # Or use transcribe_audio_using_google
+
+        print(f"Message: {message}")
+
+        speak_and_play(f"Sending message to {matched_contact}: {message}")
+        url = f'https://web.whatsapp.com/send?phone={phone_number}&text={message}'
+        webbrowser.open(url)
+
+        # Allow time for WhatsApp Web to load and send the message
+        time.sleep(10)
+        pyautogui.press('enter')
+        speak_and_play("Message sent successfully.")
+        break
+
+whatsapp_messaging()
