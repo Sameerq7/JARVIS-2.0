@@ -1622,8 +1622,8 @@ if __name__ == "__main__":
     # PlayVideo(video_file)
     # time.sleep(2)
     #fetch_and_play_news()
-   # main()
-    create_document()
+    main()
+    #create_document()
     #read_recent_emails()
 
     #add_event()
