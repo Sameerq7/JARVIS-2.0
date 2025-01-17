@@ -15,7 +15,10 @@ Jarvis is a versatile virtual assistant that performs tasks like code generation
 ### Task Management
 - Opens and manages applications such as PowerPoint and email clients.
 - Sends emails on behalf of the user with simple voice commands.
+- Reads emails and provides a summary of new messages.
 - Manages and checks the user’s schedule, adding events as needed.
+- Schedules tasks and allows users to check or update schedules seamlessly.
+- Creates complete documents on the provided topics based on user requests.
 
 ### Information Retrieval
 - Accesses Wikipedia to provide summaries and detailed information on various topics.
@@ -38,6 +41,7 @@ Jarvis is a versatile virtual assistant that performs tasks like code generation
 
 ### Social Media Integration
 - Opens popular social media platforms like Instagram, WhatsApp, and GitHub seamlessly.
+- Sends and reads messages on WhatsApp.
 - Checks and reads emails, providing a quick overview of recent messages.
 
 ### Voice Recognition and Playback
